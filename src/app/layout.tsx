@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "TechPulse — AI & IT Technology Blog",
-    template: "%s | TechPulse",
+    default: "Daily Developer Insights — AI & IT Technology Blog",
+    template: "%s | Daily Developer Insights",
   },
   description:
     "Cutting-edge insights on Artificial Intelligence, Machine Learning, and emerging IT technologies.",
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    siteName: "TechPulse",
+    siteName: "Daily Developer Insights",
   },
 };
 

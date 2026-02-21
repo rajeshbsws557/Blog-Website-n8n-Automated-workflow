@@ -33,9 +33,9 @@ export function Navbar() {
             transition={{ duration: 0.4 }}
             className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent to-accent-secondary flex items-center justify-center"
           >
-            <span className="text-white font-bold text-sm">T</span>
+            <span className="text-white font-bold text-sm">D</span>
           </motion.div>
-          <span className="text-lg font-bold gradient-text">TechPulse</span>
+          <span className="text-lg font-bold gradient-text">Daily Developer Insights</span>
         </Link>
 
         {/* Desktop Nav */}

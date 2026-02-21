@@ -17,9 +17,9 @@ export function Footer() {
           <div>
             <Link href="/" className="flex items-center gap-2 mb-3">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent to-accent-secondary flex items-center justify-center">
-                <span className="text-white font-bold text-sm">T</span>
+                <span className="text-white font-bold text-sm">D</span>
               </div>
-              <span className="text-lg font-bold gradient-text">TechPulse</span>
+              <span className="text-lg font-bold gradient-text">Daily Developer Insights</span>
             </Link>
             <p className="text-muted text-sm leading-relaxed">
               Cutting-edge insights on AI, Machine Learning, and emerging
@@ -71,7 +71,7 @@ export function Footer() {
         </div>
 
         <div className="mt-10 pt-6 border-t border-border/50 text-center text-sm text-muted">
-          &copy; {new Date().getFullYear()} TechPulse. All rights reserved.
+          &copy; {new Date().getFullYear()} Daily Developer Insights. All rights reserved.
         </div>
       </div>
     </motion.footer>
