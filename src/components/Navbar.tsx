@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -69,14 +70,17 @@ export function Navbar() {
               </Link>
             );
           })}
+          <ThemeToggle />
         </div>
 
         {/* Mobile Hamburger */}
-        <button
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className="md:hidden p-2 text-muted hover:text-foreground transition-colors"
-          aria-label="Toggle menu"
-        >
+        <div className="flex md:hidden items-center gap-2">
+          <ThemeToggle />
+          <button
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className="p-2 text-muted hover:text-foreground transition-colors"
+            aria-label="Toggle menu"
+          >
           <svg
             className="w-6 h-6"
             fill="none"
@@ -99,7 +103,8 @@ export function Navbar() {
               />
             )}
           </svg>
-        </button>
+          </button>
+        </div>
       </nav>
 
       {/* Mobile Menu */}
