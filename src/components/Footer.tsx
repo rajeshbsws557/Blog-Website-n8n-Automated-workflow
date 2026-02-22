@@ -22,7 +22,7 @@ export function Footer() {
       className="border-t border-border/50 bg-card/30"
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* Brand */}
           <div>
             <Link href="/" className="flex items-center gap-2 mb-3">
@@ -68,6 +68,26 @@ export function Footer() {
                   className="px-3 py-1 rounded-full text-xs font-medium border border-border text-muted bg-card hover:border-accent/30 hover:text-accent transition-all duration-200"
                 >
                   {topic}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Company / Legal */}
+          <div>
+            <h4 className="font-semibold text-foreground mb-3">Company</h4>
+            <div className="space-y-2">
+              {[
+                { href: "/about", label: "About Us" },
+                { href: "/privacy", label: "Privacy Policy" },
+                { href: "/terms", label: "Terms of Service" },
+              ].map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="block text-sm text-muted hover:text-accent transition-colors"
+                >
+                  {link.label}
                 </Link>
               ))}
             </div>
