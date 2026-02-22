@@ -21,5 +21,5 @@ export default async function AdminDashboardPage() {
     .select("*")
     .order("created_at", { ascending: false });
 
-  return <AdminDashboardClient posts={posts || []} userEmail={user.email || ""} />;
+  return <AdminDashboardClient posts={posts || []} />;
 }

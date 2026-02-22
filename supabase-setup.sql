@@ -87,3 +87,95 @@ CREATE POLICY "Authenticated users can delete blog images"
   FOR DELETE
   TO authenticated
   USING (bucket_id = 'blog-images');
+
+-- ============================================================
+-- 8. Newsletter Subscribers Table
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS public.subscribers (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  email TEXT NOT NULL UNIQUE,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Index for fast lookups by email
+CREATE INDEX IF NOT EXISTS idx_subscribers_email ON public.subscribers (email);
+
+-- Enable RLS
+ALTER TABLE public.subscribers ENABLE ROW LEVEL SECURITY;
+
+-- Anyone (anon) can insert a new subscription
+CREATE POLICY "Anyone can subscribe"
+  ON public.subscribers
+  FOR INSERT
+  TO anon, authenticated
+  WITH CHECK (true);
+
+-- Only authenticated admins can view the subscriber list
+CREATE POLICY "Admins can view subscribers"
+  ON public.subscribers
+  FOR SELECT
+  TO authenticated
+  USING (true);
+
+-- Only authenticated admins can delete subscribers
+CREATE POLICY "Admins can delete subscribers"
+  ON public.subscribers
+  FOR DELETE
+  TO authenticated
+  USING (true);
+
+-- ============================================================
+-- 9. Analytics Events Table
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS public.analytics_events (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  event_type TEXT NOT NULL DEFAULT 'page_view',
+  page_slug TEXT,
+  country TEXT,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_analytics_events_created_at ON public.analytics_events (created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_analytics_events_page_slug ON public.analytics_events (page_slug);
+CREATE INDEX IF NOT EXISTS idx_analytics_events_event_type ON public.analytics_events (event_type);
+
+ALTER TABLE public.analytics_events ENABLE ROW LEVEL SECURITY;
+
+-- Anyone (anon) can insert analytics events
+CREATE POLICY "Anyone can insert analytics events"
+  ON public.analytics_events
+  FOR INSERT
+  TO anon, authenticated
+  WITH CHECK (true);
+
+-- Only authenticated admins can view analytics
+CREATE POLICY "Admins can view analytics"
+  ON public.analytics_events
+  FOR SELECT
+  TO authenticated
+  USING (true);
+
+-- ============================================================
+-- 10. Add view_count to posts table
+-- ============================================================
+
+ALTER TABLE public.posts ADD COLUMN IF NOT EXISTS view_count INTEGER DEFAULT 0;
+
+-- ============================================================
+-- 11. Function to increment post view count (safe, atomic)
+-- ============================================================
+
+CREATE OR REPLACE FUNCTION public.increment_view_count(post_slug TEXT)
+RETURNS void AS $$
+BEGIN
+  UPDATE public.posts
+  SET view_count = view_count + 1
+  WHERE slug = post_slug AND is_published = true;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Grant execute to anon so public visitors can trigger it
+GRANT EXECUTE ON FUNCTION public.increment_view_count(TEXT) TO anon;
+GRANT EXECUTE ON FUNCTION public.increment_view_count(TEXT) TO authenticated;

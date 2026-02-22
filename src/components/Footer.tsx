@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { NewsletterForm } from "@/components/NewsletterForm";
 
 const TOPICS = [
   "AI",
@@ -21,7 +22,7 @@ export function Footer() {
       className="border-t border-border/50 bg-card/30"
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand */}
           <div>
             <Link href="/" className="flex items-center gap-2 mb-3">
@@ -70,6 +71,15 @@ export function Footer() {
                 </Link>
               ))}
             </div>
+          </div>
+
+          {/* Newsletter */}
+          <div>
+            <h4 className="font-semibold text-foreground mb-3">Stay Updated</h4>
+            <p className="text-muted text-sm leading-relaxed mb-4">
+              Get the latest articles delivered straight to your inbox.
+            </p>
+            <NewsletterForm />
           </div>
         </div>
 
