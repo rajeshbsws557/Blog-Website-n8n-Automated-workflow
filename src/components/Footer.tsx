@@ -3,6 +3,15 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 
+const TOPICS = [
+  "AI",
+  "Machine Learning",
+  "Deep Learning",
+  "Cloud",
+  "DevOps",
+  "Web Dev",
+] as const;
+
 export function Footer() {
   return (
     <motion.footer
@@ -51,20 +60,14 @@ export function Footer() {
           <div>
             <h4 className="font-semibold text-foreground mb-3">Topics</h4>
             <div className="flex flex-wrap gap-2">
-              {[
-                "AI",
-                "Machine Learning",
-                "Deep Learning",
-                "Cloud",
-                "DevOps",
-                "Web Dev",
-              ].map((topic) => (
-                <span
+              {TOPICS.map((topic) => (
+                <Link
                   key={topic}
-                  className="px-3 py-1 rounded-full text-xs font-medium border border-border text-muted bg-card"
+                  href={`/search?q=${encodeURIComponent(topic)}`}
+                  className="px-3 py-1 rounded-full text-xs font-medium border border-border text-muted bg-card hover:border-accent/30 hover:text-accent transition-all duration-200"
                 >
                   {topic}
-                </span>
+                </Link>
               ))}
             </div>
           </div>

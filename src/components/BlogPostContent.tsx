@@ -73,6 +73,7 @@ export function BlogPostContent({ post }: BlogPostContentProps) {
             src={post.image_url}
             alt={post.title}
             fill
+            sizes="(max-width: 768px) 100vw, 896px"
             className="object-cover"
             priority
           />

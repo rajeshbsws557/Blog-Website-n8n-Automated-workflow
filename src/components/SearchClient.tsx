@@ -1,13 +1,16 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
 import type { Post } from "@/lib/types";
 import { BlogCard } from "./BlogCard";
 
 export function SearchClient() {
-  const [query, setQuery] = useState("");
+  const searchParams = useSearchParams();
+  const initialQuery = searchParams.get("q") || "";
+  const [query, setQuery] = useState(initialQuery);
   const [results, setResults] = useState<Post[]>([]);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
@@ -26,13 +29,19 @@ export function SearchClient() {
       setSearched(true);
 
       try {
-        // Full-text search using Supabase text search
+        // Sanitize search input: escape LIKE special characters to prevent wildcard injection
+        const sanitized = searchQuery
+          .replace(/\\/g, "\\\\")
+          .replace(/%/g, "\\%")
+          .replace(/_/g, "\\_")
+          .slice(0, 200); // Limit query length
+
         const { data } = await supabase
           .from("posts")
           .select("*")
           .eq("is_published", true)
           .or(
-            `title.ilike.%${searchQuery}%,content_markdown.ilike.%${searchQuery}%,meta_description.ilike.%${searchQuery}%`
+            `title.ilike.%${sanitized}%,content_markdown.ilike.%${sanitized}%,meta_description.ilike.%${sanitized}%`
           )
           .order("published_at", { ascending: false })
           .limit(20);

@@ -2,8 +2,35 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { nanoid } from "nanoid";
 
+// Simple in-memory rate limiter per IP
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+const RATE_LIMIT_WINDOW = 60_000; // 1 minute
+const RATE_LIMIT_MAX = 10; // max 10 requests per minute
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(ip);
+
+  if (!entry || now > entry.resetAt) {
+    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW });
+    return false;
+  }
+
+  entry.count++;
+  return entry.count > RATE_LIMIT_MAX;
+}
+
 export async function POST(request: NextRequest) {
   try {
+    // Rate limiting
+    const ip = request.headers.get("x-forwarded-for") || "unknown";
+    if (isRateLimited(ip)) {
+      return NextResponse.json(
+        { error: "Too many requests. Try again later." },
+        { status: 429 }
+      );
+    }
+
     // 1. Verify the API key
     const apiKey = request.headers.get("x-n8n-api-key");
     const expectedKey = process.env.N8N_API_SECRET;
@@ -30,19 +57,34 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Sanitize slug: only allow alphanumeric, hyphens, and underscores
+    const sanitizedSlug = String(slug)
+      .toLowerCase()
+      .replace(/[^a-z0-9-_]/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "")
+      .slice(0, 200);
+
+    if (!sanitizedSlug) {
+      return NextResponse.json(
+        { error: "Bad Request: slug is invalid after sanitization" },
+        { status: 400 }
+      );
+    }
+
     // 4. Initialize Supabase admin client (bypasses RLS)
     const supabase = createAdminClient();
 
     // 5. Handle duplicate slugs — check if slug exists, append nanoid if so
-    let finalSlug = slug;
+    let finalSlug = sanitizedSlug;
     const { data: existingPost } = await supabase
       .from("posts")
       .select("id")
-      .eq("slug", slug)
+      .eq("slug", sanitizedSlug)
       .maybeSingle();
 
     if (existingPost) {
-      finalSlug = `${slug}-${nanoid(6)}`;
+      finalSlug = `${sanitizedSlug}-${nanoid(6)}`;
     }
 
     // 6. Insert the post
