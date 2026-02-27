@@ -8,6 +8,14 @@ const nextConfig: NextConfig = {
         hostname: "sgyfmndjvpyfazzwoavf.supabase.co",
         pathname: "/storage/v1/object/public/**",
       },
+      {
+        protocol: "https",
+        hostname: "i.ibb.co",
+      },
+      {
+        protocol: "https",
+        hostname: "image.ibb.co",
+      },
     ],
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days
@@ -49,7 +57,7 @@ const nextConfig: NextConfig = {
               "default-src 'self'",
               "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
               "style-src 'self' 'unsafe-inline'",
-              "img-src 'self' data: blob: https://sgyfmndjvpyfazzwoavf.supabase.co https://*.supabase.co",
+              "img-src 'self' data: blob: https://sgyfmndjvpyfazzwoavf.supabase.co https://*.supabase.co https://i.ibb.co https://image.ibb.co",
               "font-src 'self'",
               "connect-src 'self' https://sgyfmndjvpyfazzwoavf.supabase.co https://*.supabase.co",
               "frame-ancestors 'none'",

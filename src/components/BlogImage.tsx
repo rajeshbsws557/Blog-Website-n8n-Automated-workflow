@@ -15,11 +15,11 @@ interface BlogImageProps extends Omit<ImageProps, "onError"> {
 export function BlogImage({ fallbackText, src, alt, className, ...rest }: BlogImageProps) {
   const [hasError, setHasError] = useState(false);
 
-  // Skip optimization for external images that aren't from our Supabase storage.
-  // The Next.js image optimizer can timeout on slow external sources.
+  // Optimize images from known allowed domains (Supabase + ImageBB).
+  // All others use unoptimized to avoid Next.js optimizer timeouts.
   const srcStr = typeof src === "string" ? src : "";
-  const isSupabaseImage = srcStr.includes("supabase.co");
-  const shouldOptimize = isSupabaseImage;
+  const isAllowedDomain = srcStr.includes("supabase.co") || srcStr.includes("ibb.co");
+  const shouldOptimize = isAllowedDomain;
 
   if (hasError || !src) {
     return (
