@@ -4,8 +4,8 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import rehypeRaw from "rehype-raw";
-import Image from "next/image";
 import type { Components } from "react-markdown";
+import { BlogImage } from "@/components/BlogImage";
 
 interface MarkdownRendererProps {
   content: string;
@@ -15,15 +15,13 @@ const components: Partial<Components> = {
   img: ({ src, alt }) => {
     if (!src || typeof src !== "string") return null;
     return (
-      <span className="block relative w-full my-6" style={{ maxHeight: "28rem" }}>
-        <Image
+      <span className="block relative w-full my-6" style={{ minHeight: "14rem", maxHeight: "28rem" }}>
+        <BlogImage
           src={src}
           alt={alt || ""}
-          width={896}
-          height={448}
-          className="rounded-xl object-cover w-full"
-          style={{ maxHeight: "28rem" }}
+          fill
           sizes="(max-width: 768px) 100vw, 896px"
+          className="rounded-xl object-cover"
           loading="lazy"
         />
       </span>

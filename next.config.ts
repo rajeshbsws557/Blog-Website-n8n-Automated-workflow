@@ -9,12 +9,9 @@ const nextConfig: NextConfig = {
         pathname: "/storage/v1/object/public/**",
       },
       {
+        // Allow any external image host (ImageBB, Unsplash, etc.)
         protocol: "https",
-        hostname: "i.ibb.co",
-      },
-      {
-        protocol: "https",
-        hostname: "image.ibb.co",
+        hostname: "**",
       },
     ],
     formats: ["image/avif", "image/webp"],
@@ -57,7 +54,7 @@ const nextConfig: NextConfig = {
               "default-src 'self'",
               "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
               "style-src 'self' 'unsafe-inline'",
-              "img-src 'self' data: blob: https://sgyfmndjvpyfazzwoavf.supabase.co https://*.supabase.co https://i.ibb.co https://image.ibb.co",
+              "img-src 'self' data: blob: https:",
               "font-src 'self'",
               "connect-src 'self' https://sgyfmndjvpyfazzwoavf.supabase.co https://*.supabase.co",
               "frame-ancestors 'none'",

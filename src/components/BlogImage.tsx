@@ -10,16 +10,19 @@ interface BlogImageProps extends Omit<ImageProps, "onError"> {
 /**
  * A resilient image wrapper around next/image.
  * - Shows a gradient placeholder on error instead of broken alt-text.
- * - Uses `unoptimized` for non-Supabase URLs to avoid optimizer timeouts.
+ * - External images are loaded directly (unoptimized) to avoid server-side
+ *   optimizer failures (CDN blocking, timeouts, rate-limits).
+ * - Supabase storage images go through the optimizer (reliable same-infra).
  */
 export function BlogImage({ fallbackText, src, alt, className, ...rest }: BlogImageProps) {
   const [hasError, setHasError] = useState(false);
 
-  // Optimize images from known allowed domains (Supabase + ImageBB).
-  // All others use unoptimized to avoid Next.js optimizer timeouts.
   const srcStr = typeof src === "string" ? src : "";
-  const isAllowedDomain = srcStr.includes("supabase.co") || srcStr.includes("ibb.co");
-  const shouldOptimize = isAllowedDomain;
+
+  // Only optimise images from our own Supabase storage — we control the server
+  // and know the optimizer can always reach it.  Every other external URL is
+  // loaded directly by the browser (unoptimized) which is 100% reliable.
+  const isSupabaseImage = srcStr.includes("supabase.co");
 
   if (hasError || !src) {
     return (
@@ -37,7 +40,7 @@ export function BlogImage({ fallbackText, src, alt, className, ...rest }: BlogIm
       src={src}
       alt={alt}
       className={className}
-      unoptimized={!shouldOptimize}
+      unoptimized={!isSupabaseImage}
       onError={() => setHasError(true)}
       {...rest}
     />
