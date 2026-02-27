@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { usePathname } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
 export function AnalyticsTracker() {
   const pathname = usePathname();
+  // Stable client — avoid recreating on every render/route change
+  const supabase = useMemo(() => createClient(), []);
 
   useEffect(() => {
     // Don't track admin pages
@@ -18,8 +20,6 @@ export function AnalyticsTracker() {
 
     const track = async () => {
       try {
-        const supabase = createClient();
-
         // Determine the page_slug: for blog posts, extract slug; otherwise use pathname
         let pageSlug = pathname;
         const blogMatch = pathname.match(/^\/blog\/(.+)$/);
@@ -42,14 +42,18 @@ export function AnalyticsTracker() {
 
         // Mark as tracked for this session
         sessionStorage.setItem(sessionKey, "1");
-      } catch (err) {
+      } catch {
         // Silently fail — analytics should never break the user experience
-        console.error("Analytics tracking error:", err);
       }
     };
 
-    track();
-  }, [pathname]);
+    // Defer analytics to avoid blocking render / interactivity
+    if (typeof requestIdleCallback === "function") {
+      requestIdleCallback(() => track());
+    } else {
+      setTimeout(track, 100);
+    }
+  }, [pathname, supabase]);
 
   return null;
 }

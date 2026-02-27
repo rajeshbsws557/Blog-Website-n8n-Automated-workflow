@@ -1,43 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { nanoid } from "nanoid";
+import { timingSafeEqual } from "crypto";
 
-// Simple in-memory rate limiter per IP
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
-const RATE_LIMIT_WINDOW = 60_000; // 1 minute
-const RATE_LIMIT_MAX = 10; // max 10 requests per minute
-
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const entry = rateLimitMap.get(ip);
-
-  if (!entry || now > entry.resetAt) {
-    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW });
-    return false;
-  }
-
-  entry.count++;
-  return entry.count > RATE_LIMIT_MAX;
+/**
+ * Timing-safe string comparison to prevent timing attacks on API key.
+ */
+function safeCompare(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  return timingSafeEqual(Buffer.from(a), Buffer.from(b));
 }
 
 export async function POST(request: NextRequest) {
   try {
-    // Rate limiting
-    const ip = request.headers.get("x-forwarded-for") || "unknown";
-    if (isRateLimited(ip)) {
-      return NextResponse.json(
-        { error: "Too many requests. Try again later." },
-        { status: 429 }
-      );
-    }
+    // 1. Verify the API key (timing-safe to prevent side-channel attacks)
+    const apiKey = request.headers.get("x-n8n-api-key") || "";
+    const expectedKey = process.env.N8N_API_SECRET || "";
 
-    // 1. Verify the API key
-    const apiKey = request.headers.get("x-n8n-api-key");
-    const expectedKey = process.env.N8N_API_SECRET;
-
-    if (!expectedKey || apiKey !== expectedKey) {
+    if (!expectedKey || !apiKey || !safeCompare(apiKey, expectedKey)) {
       return NextResponse.json(
-        { error: "Unauthorized: Invalid or missing API key" },
+        { error: "Unauthorized" },
         { status: 401 }
       );
     }
@@ -105,7 +87,7 @@ export async function POST(request: NextRequest) {
     if (insertError) {
       console.error("Supabase insert error:", insertError);
       return NextResponse.json(
-        { error: "Database error", details: insertError.message },
+        { error: "Failed to create post" },
         { status: 500 }
       );
     }

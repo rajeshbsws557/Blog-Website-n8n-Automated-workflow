@@ -43,8 +43,9 @@ export function Footer() {
             <div className="space-y-2">
               {[
                 { href: "/", label: "Home" },
-                { href: "/search", label: "Search Articles" },
-                { href: "/admin", label: "Admin Dashboard" },
+                { href: "/blog", label: "All Articles" },
+                { href: "/search", label: "Search" },
+                { href: "/about", label: "About" },
               ].map((link) => (
                 <Link
                   key={link.href}

@@ -1,9 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Image from "next/image";
 import Link from "next/link";
 import type { Post } from "@/lib/types";
+import { BlogImage } from "@/components/BlogImage";
 import { MarkdownRenderer } from "./MarkdownRenderer";
 
 interface BlogPostContentProps {
@@ -28,7 +28,7 @@ export function BlogPostContent({ post }: BlogPostContentProps) {
         transition={{ duration: 0.4 }}
       >
         <Link
-          href="/"
+          href="/blog"
           className="inline-flex items-center gap-2 text-sm text-muted hover:text-accent transition-colors mb-8"
         >
           <span>←</span> Back to articles
@@ -69,7 +69,7 @@ export function BlogPostContent({ post }: BlogPostContentProps) {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="relative w-full h-64 md:h-96 rounded-2xl overflow-hidden mb-10 border border-border/50"
         >
-          <Image
+          <BlogImage
             src={post.image_url}
             alt={post.title}
             fill
@@ -97,7 +97,7 @@ export function BlogPostContent({ post }: BlogPostContentProps) {
         className="mt-16 pt-8 border-t border-border/50 text-center"
       >
         <Link
-          href="/"
+          href="/blog"
           className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-border text-sm font-medium text-muted hover:text-accent hover:border-accent/30 transition-all"
         >
           ← More Articles

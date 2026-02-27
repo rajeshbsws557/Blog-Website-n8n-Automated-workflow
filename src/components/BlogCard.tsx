@@ -2,11 +2,13 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import Image from "next/image";
+import { BlogImage } from "@/components/BlogImage";
 import type { Post } from "@/lib/types";
 
+type PostListItem = Omit<Post, "content_markdown"> & { content_markdown?: string };
+
 interface BlogCardProps {
-  post: Post;
+  post: PostListItem;
   index: number;
 }
 
@@ -20,7 +22,7 @@ export function BlogCard({ post, index }: BlogCardProps) {
     : "Draft";
 
   const excerpt = post.meta_description || 
-    post.content_markdown.slice(0, 150).replace(/[#*`\[\]]/g, "") + "...";
+    (post.content_markdown ? post.content_markdown.slice(0, 150).replace(/[#*`\[\]]/g, "") + "..." : "");
 
   return (
     <motion.article
@@ -36,7 +38,7 @@ export function BlogCard({ post, index }: BlogCardProps) {
           {/* Image */}
           {post.image_url && (
             <div className="relative h-48 overflow-hidden">
-              <Image
+              <BlogImage
                 src={post.image_url}
                 alt={post.title}
                 fill

@@ -268,3 +268,21 @@ body {
   100% { background-position: -200% 0; }
 }
 
+/* Hero orb animations — GPU-accelerated via transform */
+.hero-orb-1 {
+  animation: hero-float-1 8s ease-in-out infinite;
+  will-change: transform;
+}
+.hero-orb-2 {
+  animation: hero-float-2 10s ease-in-out infinite;
+  will-change: transform;
+}
+@keyframes hero-float-1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(30px, -20px) scale(1.1); }
+}
+@keyframes hero-float-2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-20px, 30px) scale(1.15); }
+}
+

@@ -4,7 +4,7 @@ export default function Loading() {
   return (
     <div>
       {/* Hero skeleton */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-24 text-center">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-20 text-center">
         <div className="h-6 w-48 rounded-full skeleton mx-auto mb-6" />
         <div className="h-14 w-3/4 rounded-xl skeleton mx-auto mb-4" />
         <div className="h-14 w-1/2 rounded-xl skeleton mx-auto mb-6" />
@@ -12,6 +12,21 @@ export default function Loading() {
         <div className="flex gap-4 justify-center">
           <div className="h-12 w-36 rounded-xl skeleton" />
           <div className="h-12 w-36 rounded-xl skeleton" />
+        </div>
+      </div>
+
+      {/* Latest News skeleton */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-8 pb-4">
+        <div className="flex items-center gap-3 mb-8">
+          <div className="h-7 w-40 rounded skeleton" />
+          <div className="flex-1 h-px bg-border/30" />
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
+          <div className="lg:col-span-3 h-[420px] rounded-2xl skeleton" />
+          <div className="lg:col-span-2 flex flex-col gap-5">
+            <div className="flex-1 min-h-[180px] rounded-2xl skeleton" />
+            <div className="flex-1 min-h-[180px] rounded-2xl skeleton" />
+          </div>
         </div>
       </div>
 

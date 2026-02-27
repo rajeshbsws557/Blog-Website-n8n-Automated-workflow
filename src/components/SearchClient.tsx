@@ -1,21 +1,25 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
 import type { Post } from "@/lib/types";
 import { BlogCard } from "./BlogCard";
 
+// Select only listing columns for search results — skip content_markdown
+const SEARCH_COLUMNS = "id, title, slug, meta_description, image_url, published_at, is_published, view_count, created_at, updated_at";
+
 export function SearchClient() {
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get("q") || "";
   const [query, setQuery] = useState(initialQuery);
-  const [results, setResults] = useState<Post[]>([]);
+  const [results, setResults] = useState<Omit<Post, "content_markdown">[]>([]);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
 
-  const supabase = createClient();
+  // Stable supabase client — only create once
+  const supabase = useMemo(() => createClient(), []);
 
   const search = useCallback(
     async (searchQuery: string) => {
@@ -29,19 +33,20 @@ export function SearchClient() {
       setSearched(true);
 
       try {
-        // Sanitize search input: escape LIKE special characters to prevent wildcard injection
+        // Sanitize: escape PostgREST-meaningful chars to prevent filter injection
         const sanitized = searchQuery
           .replace(/\\/g, "\\\\")
           .replace(/%/g, "\\%")
           .replace(/_/g, "\\_")
-          .slice(0, 200); // Limit query length
+          .replace(/[,.()"']/g, "") // strip chars that could break .or() filter syntax
+          .slice(0, 200);
 
         const { data } = await supabase
           .from("posts")
-          .select("*")
+          .select(SEARCH_COLUMNS)
           .eq("is_published", true)
           .or(
-            `title.ilike.%${sanitized}%,content_markdown.ilike.%${sanitized}%,meta_description.ilike.%${sanitized}%`
+            `title.ilike.%${sanitized}%,meta_description.ilike.%${sanitized}%`
           )
           .order("published_at", { ascending: false })
           .limit(20);

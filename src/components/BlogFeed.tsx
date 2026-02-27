@@ -5,8 +5,10 @@ import Link from "next/link";
 import type { Post } from "@/lib/types";
 import { BlogCard } from "./BlogCard";
 
+type PostListItem = Omit<Post, "content_markdown"> & { content_markdown?: string };
+
 interface BlogFeedProps {
-  posts: Post[];
+  posts: PostListItem[];
   currentPage: number;
   totalPages: number;
 }
@@ -21,9 +23,9 @@ export function BlogFeed({ posts, currentPage, totalPages }: BlogFeedProps) {
         viewport={{ once: true }}
         className="mb-10"
       >
-        <h2 className="text-3xl font-bold mb-2">Latest Articles</h2>
+        <h2 className="text-3xl font-bold mb-2">All Articles</h2>
         <p className="text-muted">
-          Stay up-to-date with the latest in AI and technology
+          Browse our complete collection of tech insights
         </p>
       </motion.div>
 

@@ -8,8 +8,9 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 
 const navLinks = [
   { href: "/", label: "Home" },
+  { href: "/blog", label: "Articles" },
   { href: "/search", label: "Search" },
-  { href: "/admin", label: "Admin" },
+  { href: "/about", label: "About" },
 ];
 
 export function Navbar() {
