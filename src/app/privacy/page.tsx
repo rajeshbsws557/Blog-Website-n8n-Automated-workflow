@@ -5,6 +5,9 @@ import Link from "next/link";
 
 const LAST_UPDATED = "February 22, 2026";
 
+const GOOGLE_ADSENSE_VENDOR_ID = "755"; // Google AdSense vendor ID for TCF 2.0
+const GOOGLE_PRIVACY_URL = "https://policies.google.com/privacy";
+
 const sections = [
   {
     title: "1. Information We Collect",

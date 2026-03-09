@@ -5,6 +5,8 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { AnalyticsTracker } from "@/components/AnalyticsTracker";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { AdSenseScript } from "@/components/AdSenseScript";
+import { CookieConsent } from "@/components/CookieConsent";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -85,14 +87,22 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* Google AdSense Verification - Insert your verification code below */}
+        {/* <meta name="google-adsense-account" content="ca-pub-XXXXXXXXXXXXXXXX" /> */}
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground min-h-screen flex flex-col`}
       >
         <ThemeProvider>
           <Navbar />
           <AnalyticsTracker />
+          {/* Google AdSense - Replace with your publisher ID */}
+          <AdSenseScript publisherId="ca-pub-XXXXXXXXXXXXXXXX" />
           <main className="flex-1">{children}</main>
           <Footer />
+          {/* GDPR-compliant cookie consent for AdSense */}
+          <CookieConsent />
         </ThemeProvider>
       </body>
     </html>

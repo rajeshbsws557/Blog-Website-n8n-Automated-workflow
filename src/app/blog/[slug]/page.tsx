@@ -65,16 +65,27 @@ function ArticleJsonLd({ post, slug }: { post: { title: string; meta_description
       "@type": "WebPage",
       "@id": `${SITE_URL}/blog/${slug}`,
     },
+    articleSection: "AI & Technology",
     author: {
       "@type": "Organization",
       name: "Daily Developer Insights",
       url: SITE_URL,
+      logo: {
+        "@type": "ImageObject",
+        url: `${SITE_URL}/logo.png`,
+      },
     },
     publisher: {
       "@type": "Organization",
       name: "Daily Developer Insights",
       url: SITE_URL,
+      logo: {
+        "@type": "ImageObject",
+        url: `${SITE_URL}/logo.png`,
+      },
     },
+    inLanguage: "en",
+    isAccessibleForFree: true,
   };
 
   return (

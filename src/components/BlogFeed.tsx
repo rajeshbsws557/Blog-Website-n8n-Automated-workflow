@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import type { Post } from "@/lib/types";
 import { BlogCard } from "./BlogCard";
+import { AdUnit } from "@/components/AdUnit";
 
 type PostListItem = Omit<Post, "content_markdown"> & { content_markdown?: string };
 
@@ -33,7 +34,39 @@ export function BlogFeed({ posts, currentPage, totalPages }: BlogFeedProps) {
       {posts.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {posts.map((post, index) => (
-            <BlogCard key={post.id} post={post} index={index} />
+            <>
+              <BlogCard key={post.id} post={post} index={index} />
+              {/* Ad Placement: After every 3 blog cards */}
+              {/* Insert an Ad Card that blends with the grid design */}
+              {(index + 1) % 3 === 0 && index !== posts.length - 1 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-50px" }}
+                  transition={{ duration: 0.5 }}
+                  className="col-span-1 md:col-span-2 lg:col-span-3 my-4"
+                >
+                  {/* Ad Card - Styled to blend with blog cards but clearly marked */}
+                  <div className="relative overflow-hidden rounded-2xl border border-dashed border-border/70 bg-card/50 p-6">
+                    {/* Ad Label */}
+                    <div className="absolute top-3 left-1/2 -translate-x-1/2">
+                      <span className="text-[10px] uppercase tracking-wider text-muted/70 font-medium px-2 py-1 rounded-full bg-background/80 border border-border/50">
+                        Advertisement
+                      </span>
+                    </div>
+                    {/* Ad Unit */}
+                    {/* TODO: Insert your AdSense ad slot ID below. Format: responsive */}
+                    <div className="mt-6">
+                      <AdUnit
+                        slot={`YOUR_FEED_AD_SLOT_ID_${Math.floor((index + 1) / 3)}`} // Replace with your AdSense ad slot ID
+                        format="responsive"
+                        className="min-h-[250px] flex items-center justify-center"
+                      />
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </>
           ))}
         </div>
       ) : (

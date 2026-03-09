@@ -5,6 +5,7 @@ import Link from "next/link";
 import type { Post } from "@/lib/types";
 import { BlogImage } from "@/components/BlogImage";
 import { MarkdownRenderer } from "./MarkdownRenderer";
+import { AdUnit } from "@/components/AdUnit";
 
 interface BlogPostContentProps {
   post: Post;
@@ -80,6 +81,14 @@ export function BlogPostContent({ post }: BlogPostContentProps) {
         </motion.div>
       )}
 
+      {/* Ad Placement: After Featured Image (Before Content) */}
+      {/* TODO: Insert your AdSense ad slot ID below. Format: responsive */}
+      <AdUnit
+        slot="YOUR_AD_SLOT_ID_1" // Replace with your AdSense ad slot ID
+        format="responsive"
+        className="my-8"
+      />
+
       {/* Content */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -88,6 +97,25 @@ export function BlogPostContent({ post }: BlogPostContentProps) {
       >
         <MarkdownRenderer content={post.content_markdown} />
       </motion.div>
+
+      {/* Ad Placement: Middle of Content (Only for longer articles) */}
+      {/* TODO: Insert your AdSense ad slot ID below. Format: responsive */}
+      {/* This ad only appears if content is substantial (>2000 chars) */}
+      {post.content_markdown && post.content_markdown.length > 2000 && (
+        <AdUnit
+          slot="YOUR_AD_SLOT_ID_2" // Replace with your AdSense ad slot ID
+          format="responsive"
+          className="my-8"
+        />
+      )}
+
+      {/* Ad Placement: End of Article (Before Bottom Navigation) */}
+      {/* TODO: Insert your AdSense ad slot ID below. Format: responsive */}
+      <AdUnit
+        slot="YOUR_AD_SLOT_ID_3" // Replace with your AdSense ad slot ID
+        format="responsive"
+        className="my-8"
+      />
 
       {/* Bottom navigation */}
       <motion.div
