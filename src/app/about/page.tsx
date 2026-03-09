@@ -4,6 +4,35 @@ import { motion } from "framer-motion";
 import type { Metadata } from "next";
 import Link from "next/link";
 
+const SITE_URL = "https://dailydeveloperinsights.tech";
+
+// Organization JSON-LD schema for E-E-A-T and AdSense
+function OrganizationJsonLd() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Daily Developer Insights",
+    url: SITE_URL,
+    logo: `${SITE_URL}/logo.png`,
+    sameAs: [
+      "https://twitter.com/dailydevinsights",
+    ],
+    contactPoint: {
+      "@type": "ContactPoint",
+      email: "contact@dailydeveloperinsights.tech",
+      contactType: "customer service",
+      availableLanguage: "English",
+    },
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
+  );
+}
+
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
   visible: (i: number) => ({
@@ -42,7 +71,9 @@ const VALUES = [
 
 export default function AboutPage() {
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-16">
+    <>
+      <OrganizationJsonLd />
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-16">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -194,6 +225,7 @@ export default function AboutPage() {
           </a>
         </div>
       </motion.section>
-    </div>
+      </div>
+    </>
   );
 }

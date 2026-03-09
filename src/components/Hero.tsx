@@ -74,6 +74,28 @@ export function Hero() {
             </p>
             <NewsletterForm />
           </motion.div>
+
+          {/* 
+            OPTIONAL: Leaderboard Ad Placement
+            Uncomment the section below to add a leaderboard ad below the newsletter
+            Best for: High-visibility placement on homepage
+            Recommended size: 728x90 (desktop) / 320x100 (mobile)
+          */}
+          {/*
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 0.5 }}
+            className="mt-12 max-w-4xl mx-auto"
+          >
+            <!-- TODO: Insert your AdSense ad slot ID below -->
+            <AdUnit
+              slot="YOUR_LEADERBOARD_AD_SLOT_ID"
+              format="responsive"
+              className="min-h-[90px] md:min-h-[90px]"
+            />
+          </motion.div>
+          */}
         </motion.div>
       </div>
     </section>
