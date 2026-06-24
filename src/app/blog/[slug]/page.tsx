@@ -9,13 +9,33 @@ interface Props {
   params: Promise<{ slug: string }>;
 }
 
+/**
+ * Auto-generates a meta description from markdown content when none is provided.
+ * Strips markdown formatting and truncates to ~155 characters at a word boundary.
+ */
+function generateDescriptionFromContent(markdown: string): string {
+  const plain = markdown
+    .replace(/^#{1,6}\s+.*/gm, "") // remove headings
+    .replace(/!\[.*?\]\(.*?\)/g, "") // remove images
+    .replace(/\[([^\]]+)\]\(.*?\)/g, "$1") // links → text
+    .replace(/[*_~`>#\-|]/g, "") // strip markdown chars
+    .replace(/\n+/g, " ") // collapse newlines
+    .replace(/\s+/g, " ") // collapse whitespace
+    .trim();
+
+  if (plain.length <= 160) return plain;
+  const truncated = plain.slice(0, 157);
+  const lastSpace = truncated.lastIndexOf(" ");
+  return (lastSpace > 100 ? truncated.slice(0, lastSpace) : truncated) + "...";
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const supabase = await createClient();
 
   const { data: post } = await supabase
     .from("posts")
-    .select("title, meta_description, image_url, published_at")
+    .select("title, meta_description, content_markdown, image_url, published_at")
     .eq("slug", slug)
     .eq("is_published", true)
     .single();
@@ -23,16 +43,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!post) return { title: "Post Not Found" };
 
   const postUrl = `${SITE_URL}/blog/${slug}`;
+  const description =
+    post.meta_description ||
+    generateDescriptionFromContent(post.content_markdown || "") ||
+    `Read ${post.title} on Daily Developer Insights.`;
 
   return {
     title: post.title,
-    description: post.meta_description || undefined,
+    description,
     alternates: {
       canonical: postUrl,
     },
     openGraph: {
       title: post.title,
-      description: post.meta_description || undefined,
+      description,
       url: postUrl,
       siteName: "Daily Developer Insights",
       images: post.image_url
@@ -45,18 +69,57 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     twitter: {
       card: "summary_large_image",
       title: post.title,
-      description: post.meta_description || undefined,
+      description,
       images: post.image_url ? [post.image_url] : undefined,
     },
   };
 }
 
-function ArticleJsonLd({ post, slug }: { post: { title: string; meta_description: string | null; image_url: string | null; published_at: string | null; updated_at: string }; slug: string }) {
+function BreadcrumbJsonLd({ title, slug }: { title: string; slug: string }) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: SITE_URL,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Articles",
+        item: `${SITE_URL}/blog`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: title,
+        item: `${SITE_URL}/blog/${slug}`,
+      },
+    ],
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
+  );
+}
+
+function ArticleJsonLd({ post, slug }: { post: { title: string; meta_description: string | null; content_markdown: string; image_url: string | null; published_at: string | null; updated_at: string }; slug: string }) {
+  const description =
+    post.meta_description ||
+    generateDescriptionFromContent(post.content_markdown || "") ||
+    post.title;
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "TechArticle",
     headline: post.title,
-    description: post.meta_description || post.title,
+    description,
     image: post.image_url || undefined,
     datePublished: post.published_at || undefined,
     dateModified: post.updated_at || post.published_at || undefined,
@@ -111,6 +174,7 @@ export default async function BlogPostPage({ params }: Props) {
 
   return (
     <>
+      <BreadcrumbJsonLd title={post.title} slug={slug} />
       <ArticleJsonLd post={post} slug={slug} />
       <BlogPostContent post={post} />
     </>

@@ -11,6 +11,12 @@ interface BlogPostContentProps {
   post: Post;
 }
 
+/** Estimates reading time from markdown word count (~225 WPM average) */
+function getReadingTime(content: string): number {
+  const words = content.trim().split(/\s+/).length;
+  return Math.max(1, Math.ceil(words / 225));
+}
+
 export function BlogPostContent({ post }: BlogPostContentProps) {
   const formattedDate = post.published_at
     ? new Date(post.published_at).toLocaleDateString("en-US", {
@@ -19,6 +25,8 @@ export function BlogPostContent({ post }: BlogPostContentProps) {
         day: "numeric",
       })
     : "";
+
+  const readingTime = getReadingTime(post.content_markdown || "");
 
   return (
     <article className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
@@ -49,6 +57,8 @@ export function BlogPostContent({ post }: BlogPostContentProps) {
           {formattedDate && (
             <time className="text-sm text-muted">{formattedDate}</time>
           )}
+          <span className="text-sm text-muted">·</span>
+          <span className="text-sm text-muted">{readingTime} min read</span>
         </div>
 
         <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight leading-tight mb-6">

@@ -30,7 +30,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: "X-Frame-Options",
-            value: "DENY",
+            value: "SAMEORIGIN",
           },
           {
             key: "X-XSS-Protection",
@@ -52,12 +52,13 @@ const nextConfig: NextConfig = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://pagead2.googlesyndication.com https://adservice.google.com https://www.googletagmanager.com https://tpc.googlesyndication.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google",
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob: https:",
-              "font-src 'self'",
-              "connect-src 'self' https://sgyfmndjvpyfazzwoavf.supabase.co https://*.supabase.co",
-              "frame-ancestors 'none'",
+              "font-src 'self' https://fonts.gstatic.com",
+              "connect-src 'self' https://sgyfmndjvpyfazzwoavf.supabase.co https://*.supabase.co https://pagead2.googlesyndication.com https://*.google.com https://*.googleapis.com https://*.doubleclick.net",
+              "frame-src 'self' https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://pagead2.googlesyndication.com",
+              "frame-ancestors 'self'",
               "base-uri 'self'",
               "form-action 'self'",
             ].join("; "),

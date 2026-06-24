@@ -11,7 +11,19 @@ interface MarkdownRendererProps {
   content: string;
 }
 
+/**
+ * Custom heading components that demote all headings by one level.
+ * Blog posts already have an <h1> from BlogPostContent, so markdown
+ * # headings should render as <h2>, ## as <h3>, etc.
+ * This ensures only one <h1> per page for proper SEO.
+ */
 const components: Partial<Components> = {
+  h1: ({ children, ...props }) => <h2 {...props}>{children}</h2>,
+  h2: ({ children, ...props }) => <h3 {...props}>{children}</h3>,
+  h3: ({ children, ...props }) => <h4 {...props}>{children}</h4>,
+  h4: ({ children, ...props }) => <h5 {...props}>{children}</h5>,
+  h5: ({ children, ...props }) => <h6 {...props}>{children}</h6>,
+  h6: ({ children, ...props }) => <h6 {...props}>{children}</h6>,
   img: ({ src, alt }) => {
     if (!src || typeof src !== "string") return null;
     return (
@@ -42,3 +54,4 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
     </div>
   );
 }
+
